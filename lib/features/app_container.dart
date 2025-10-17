@@ -1,0 +1,186 @@
+import 'package:flutter/material.dart';
+import 'cart/models/cart_item.dart';
+import 'cart/screens/cart_screen.dart';
+import 'cart/screens/checkout_screen.dart';
+import 'menu/models/menu_item.dart';
+import 'menu/screens/menu_screen.dart';
+import 'orders/models/order.dart';
+import 'orders/screens/orders_screen.dart';
+
+
+final _demoMenuItems = [
+  MenuItem(
+    id: '1',
+    title: 'Тирамису',
+    description: 'Классический итальянский десерт',
+    price: 320.0,
+    imageAsset: 'assets/tiramisu.jpg',
+  ),
+  MenuItem(
+    id: '2',
+    title: 'Эклер',
+    description: 'С заварным кремом и шоколадной глазурью',
+    price: 180.0,
+    imageAsset: 'assets/eclair.jpg',
+  ),
+  MenuItem(
+    id: '3',
+    title: 'Медовик',
+    description: 'Нежный медовый торт со сметанным кремом',
+    price: 280.0,
+    imageAsset: 'assets/medovik.jpg',
+  ),
+  MenuItem(
+    id: '4',
+    title: 'Макарун',
+    description: 'Французское пирожное с миндальной основой',
+    price: 150.0,
+    imageAsset: 'assets/macaroon.jpg',
+  ),
+  MenuItem(
+    id: '5',
+    title: 'Чизкейк Нью-Йорк',
+    description: 'Классический чизкейк с нежной текстурой',
+    price: 350.0,
+    imageAsset: 'assets/cheesecake.jpg',
+  ),
+];
+
+enum AppScreen { menu, cart, orders, checkout }
+
+class AppContainer extends StatefulWidget {
+  const AppContainer({super.key});
+
+  @override
+  State<AppContainer> createState() => _AppContainerState();
+}
+
+class _AppContainerState extends State<AppContainer> {
+  final List<MenuItem> _menuItems = _demoMenuItems;
+  final List<CartItem> _cartItems = [];
+  final List<Order> _orders = [];
+  AppScreen _currentScreen = AppScreen.menu;
+  String _orderComment = '';
+
+  void _addToCart(MenuItem item) {
+    setState(() {
+      final index = _cartItems.indexWhere((cartItem) => cartItem.menuItemId == item.id);
+      if (index != -1) {
+        final existingItem = _cartItems[index];
+        _cartItems[index] = existingItem.copyWith(quantity: existingItem.quantity + 1);
+      } else {
+        _cartItems.add(
+          CartItem(
+            id: DateTime.now().microsecondsSinceEpoch.toString(),
+            menuItemId: item.id,
+            title: item.title,
+            quantity: 1,
+            price: item.price,
+          ),
+        );
+      }
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${item.title} добавлен в корзину!'),
+      ),
+    );
+  }
+
+  void _removeFromCart(String cartItemId) {
+    setState(() {
+      _cartItems.removeWhere((item) => item.id == cartItemId);
+    });
+  }
+
+  void _clearCart() {
+    setState(() {
+      _cartItems.clear();
+    });
+  }
+
+  void _updateOrderComment(String comment) {
+    setState(() {
+      _orderComment = comment;
+    });
+  }
+
+  void _proceedToCheckout() {
+    if (_cartItems.isEmpty) return;
+    setState(() {
+      _currentScreen = AppScreen.checkout;
+    });
+  }
+
+  void _checkout() {
+    if (_cartItems.isEmpty) return;
+
+    setState(() {
+      final newOrder = Order(
+        id: DateTime.now().microsecondsSinceEpoch.toString(),
+        items: List.from(_cartItems),
+        createdAt: DateTime.now(),
+        total: _cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity)),
+        comment: _orderComment.isNotEmpty ? _orderComment : null,
+      );
+      _orders.insert(0, newOrder);
+      _cartItems.clear();
+      _orderComment = '';
+      _currentScreen = AppScreen.orders;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Заказ оформлен! Спасибо!')),
+    );
+  }
+
+  void _cancelCheckout() {
+    setState(() {
+      _orderComment = '';
+      _currentScreen = AppScreen.cart;
+    });
+  }
+
+  void _showMenu() => setState(() => _currentScreen = AppScreen.menu);
+  void _showCart() => setState(() => _currentScreen = AppScreen.cart);
+  void _showOrders() => setState(() => _currentScreen = AppScreen.orders);
+
+  @override
+  Widget build(BuildContext context) {
+    switch (_currentScreen) {
+      case AppScreen.menu:
+        return MenuScreen(
+          menuItems: _menuItems,
+          cartItems: _cartItems,
+          onAddToCart: _addToCart,
+          onShowCart: _showCart,
+          onShowOrders: _showOrders,
+        );
+      case AppScreen.cart:
+        return CartScreen(
+          cartItems: _cartItems,
+          onRemoveFromCart: _removeFromCart,
+          onClearCart: _clearCart,
+          onCheckout: _proceedToCheckout,
+          onShowMenu: _showMenu,
+          onShowOrders: _showOrders,
+        );
+      case AppScreen.orders:
+        return OrdersScreen(
+          orders: _orders,
+          onShowMenu: _showMenu,
+          onShowCart: _showCart,
+        );
+      case AppScreen.checkout:
+        return CheckoutScreen(
+          cartItems: _cartItems,
+          total: _cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity)),
+          comment: _orderComment,
+          onCommentChanged: _updateOrderComment,
+          onConfirm: _checkout,
+          onCancel: _cancelCheckout,
+        );
+    }
+  }
+}
