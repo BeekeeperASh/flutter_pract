@@ -70,6 +70,7 @@ class MenuScreen extends StatelessWidget {
       body: menuItems.isEmpty
           ? const EmptyState(
               message: 'Меню временно недоступно',
+              imageUrl: '',
               icon: Icons.cake,
             )
           : ListView.builder(

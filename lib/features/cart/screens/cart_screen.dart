@@ -47,6 +47,7 @@ class CartScreen extends StatelessWidget {
             child: cartItems.isEmpty
                 ? const EmptyState(
               message: 'Ваша корзина пуста\nДобавьте товары из меню',
+              imageUrl: 'https://avatars.mds.yandex.net/i?id=2d6069aadfe5cb3e964684cbbb33acc34342f19a-5810594-images-thumbs&n=13',
               icon: Icons.shopping_cart_outlined,
             )
                 : ListView.builder(
