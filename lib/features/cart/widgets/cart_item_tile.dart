@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../models/cart_item.dart';
 
@@ -16,9 +17,14 @@ class CartItemTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Colors.pink.shade100,
-          child: const Icon(Icons.cake, color: Colors.pink),
+        leading: CachedNetworkImage(
+          imageUrl: item.imageAsset,
+          progressIndicatorBuilder: (context, url, error) =>
+          const CircularProgressIndicator(),
+          errorWidget: (context, url, error) => CircleAvatar(
+            backgroundColor: Colors.pink.shade100,
+            child: const Icon(Icons.cake, color: Colors.pink),
+          ),
         ),
         title: Text(item.title),
         subtitle: Column(

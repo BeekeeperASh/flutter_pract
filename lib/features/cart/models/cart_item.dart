@@ -4,6 +4,7 @@ class CartItem {
   final String title;
   final int quantity;
   final double price;
+  final String imageAsset;
 
   const CartItem({
     required this.id,
@@ -11,6 +12,7 @@ class CartItem {
     required this.title,
     required this.quantity,
     required this.price,
+    required this.imageAsset,
   });
 
   CartItem copyWith({
@@ -22,6 +24,7 @@ class CartItem {
       title: title,
       quantity: quantity ?? this.quantity,
       price: price,
+      imageAsset: imageAsset
     );
   }
 }
