@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../models/menu_item.dart';
 import '../widgets/menu_item_tile.dart';
@@ -26,9 +27,20 @@ class MenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const String imageUrl =
+        'https://avatars.mds.yandex.net/i?id=3fa346cfb097bdaa65ac3c8c1104a27a_l-5367991-images-thumbs&n=13';
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sweet Delights'),
+        leading: CachedNetworkImage(
+          imageUrl: imageUrl,
+          progressIndicatorBuilder: (context, url, error) =>
+              const CircularProgressIndicator(),
+          errorWidget: (context, url, error) => CircleAvatar(
+            backgroundColor: Colors.pink.shade100,
+            child: const Icon(Icons.cake, color: Colors.pink),
+          ),
+        ),
         actions: [
           Stack(
             children: [
@@ -52,27 +64,24 @@ class MenuScreen extends StatelessWidget {
                 ),
             ],
           ),
-          IconButton(
-            icon: const Icon(Icons.history),
-            onPressed: onShowOrders,
-          ),
+          IconButton(icon: const Icon(Icons.history), onPressed: onShowOrders),
         ],
       ),
       body: menuItems.isEmpty
           ? const EmptyState(
-        message: 'Меню временно недоступно',
-        icon: Icons.cake,
-      )
+              message: 'Меню временно недоступно',
+              icon: Icons.cake,
+            )
           : ListView.builder(
-        itemCount: menuItems.length,
-        itemBuilder: (context, index) {
-          final item = menuItems[index];
-          return MenuItemTile(
-            item: item,
-            onAddToCart: () => onAddToCart(item),
-          );
-        },
-      ),
+              itemCount: menuItems.length,
+              itemBuilder: (context, index) {
+                final item = menuItems[index];
+                return MenuItemTile(
+                  item: item,
+                  onAddToCart: () => onAddToCart(item),
+                );
+              },
+            ),
     );
   }
 }
