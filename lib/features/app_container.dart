@@ -14,35 +14,42 @@ final _demoMenuItems = [
     title: 'Тирамису',
     description: 'Классический итальянский десерт',
     price: 320.0,
-    imageAsset: 'assets/tiramisu.jpg',
+    imageAsset: 'https://wallpapers.com/images/hd/yummy-tiramisu-dessert-957xzmxertxk5u3k.jpg',
   ),
   MenuItem(
     id: '2',
     title: 'Эклер',
     description: 'С заварным кремом и шоколадной глазурью',
     price: 180.0,
-    imageAsset: 'assets/eclair.jpg',
+    imageAsset: 'https://media.komus.ru/medias/sys_master/root/hf0/hba/11929376948254/-.jpg',
   ),
   MenuItem(
     id: '3',
     title: 'Медовик',
     description: 'Нежный медовый торт со сметанным кремом',
     price: 280.0,
-    imageAsset: 'assets/medovik.jpg',
+    imageAsset: 'https://53a7276f-d68f-462e-a2bf-df223e005be4.selstorage.ru/uploads/media/photo/5383581/bhL30hHWyhk.jpg',
   ),
   MenuItem(
     id: '4',
     title: 'Макарун',
     description: 'Французское пирожное с миндальной основой',
     price: 150.0,
-    imageAsset: 'assets/macaroon.jpg',
+    imageAsset: 'https://mywishboard.app/thumbs/wish/b/o/r/600x0_jkiwxgpqhmkdvnli_jpg_3895.jpg',
   ),
   MenuItem(
     id: '5',
     title: 'Чизкейк Нью-Йорк',
     description: 'Классический чизкейк с нежной текстурой',
     price: 350.0,
-    imageAsset: 'assets/cheesecake.jpg',
+    imageAsset: 'https://static.tildacdn.com/tild6539-6436-4863-b965-346365343235/U8MX3O1Bg7gwpJrdUyEo.jpg',
+  ),
+  MenuItem(
+    id: '6',
+    title: 'Берлинер',
+    description: 'Пончик с заварным кремом внутри, посыпаный сахарной пудрой',
+    price: 200.0,
+    imageAsset: 'https://static1-repo.aif.ru/1/8c/1790519/dc8a74f07c6178d999a0ba23853e0c4c.jpg',
   ),
 ];
 
@@ -76,6 +83,7 @@ class _AppContainerState extends State<AppContainer> {
             title: item.title,
             quantity: 1,
             price: item.price,
+            imageAsset: item.imageAsset
           ),
         );
       }
