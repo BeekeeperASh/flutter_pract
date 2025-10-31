@@ -8,7 +8,6 @@ class CheckoutScreen extends StatefulWidget {
   final String comment;
   final ValueChanged<String> onCommentChanged;
   final VoidCallback onConfirm;
-  final VoidCallback onCancel;
 
   const CheckoutScreen({
     super.key,
@@ -17,7 +16,6 @@ class CheckoutScreen extends StatefulWidget {
     required this.comment,
     required this.onCommentChanged,
     required this.onConfirm,
-    required this.onCancel,
   });
 
   @override
@@ -46,7 +44,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         title: const Text('Оформление заказа'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: widget.onCancel,
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Column(
@@ -117,7 +115,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: widget.onConfirm,
+                    onPressed: () {
+                      widget.onConfirm();
+                    },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       backgroundColor: Colors.pink,

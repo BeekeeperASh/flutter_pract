@@ -38,7 +38,8 @@ class MenuScreen extends StatelessWidget {
   }
 
   void _navigateToCart(BuildContext context) {
-    Navigator.push( // навигация к корзине
+    Navigator.push(
+      // навигация к корзине
       context,
       MaterialPageRoute(
         builder: (context) => CartScreen(
@@ -51,7 +52,10 @@ class MenuScreen extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => CheckoutScreen(
                   cartItems: cartItems,
-                  total: cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity)),
+                  total: cartItems.fold(
+                    0,
+                    (sum, item) => sum + (item.price * item.quantity),
+                  ),
                   comment: orderComment,
                   onCommentChanged: onUpdateOrderComment,
                   onConfirm: () {
@@ -59,7 +63,8 @@ class MenuScreen extends StatelessWidget {
                     Navigator.pop(context);
                     Navigator.of(context).pushReplacement(
                       PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) => OrdersScreen(orders: orders),
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            OrdersScreen(orders: orders),
                       ),
                     );
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -76,20 +81,18 @@ class MenuScreen extends StatelessWidget {
   }
 
   void _navigateToOrders(BuildContext context) {
-    Navigator.push( // навигация к истории заказов
+    Navigator.push(
+      // навигация к истории заказов
       context,
-      MaterialPageRoute(
-        builder: (context) => OrdersScreen(
-          orders: orders,
-        ),
-      ),
+      MaterialPageRoute(builder: (context) => OrdersScreen(orders: orders)),
     );
   }
 
   void _navigateToProfile(BuildContext context) {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const ProfileScreen(),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const ProfileScreen(),
       ),
     );
   }
@@ -130,19 +133,20 @@ class MenuScreen extends StatelessWidget {
       ),
       body: menuItems.isEmpty
           ? const EmptyState(
-        message: 'Меню временно недоступно',
-        icon: Icons.cake, imageUrl: '',
-      )
+              message: 'Меню временно недоступно',
+              icon: Icons.cake,
+              imageUrl: '',
+            )
           : ListView.builder(
-        itemCount: menuItems.length,
-        itemBuilder: (context, index) {
-          final item = menuItems[index];
-          return MenuItemTile(
-            item: item,
-            onAddToCart: () => onAddToCart(item),
-          );
-        },
-      ),
+              itemCount: menuItems.length,
+              itemBuilder: (context, index) {
+                final item = menuItems[index];
+                return MenuItemTile(
+                  item: item,
+                  onAddToCart: () => onAddToCart(item),
+                );
+              },
+            ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         onTap: (index) {
@@ -152,21 +156,16 @@ class MenuScreen extends StatelessWidget {
             case 1:
               Navigator.of(context).pushReplacement(
                 PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) => const ProfileScreen(),
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      const ProfileScreen(),
                 ),
               );
               break;
           }
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.cake),
-            label: 'Меню',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Профиль',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.cake), label: 'Меню'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
         ],
       ),
     );
