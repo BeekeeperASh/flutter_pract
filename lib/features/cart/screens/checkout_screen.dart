@@ -1,22 +1,11 @@
 import 'package:flutter/material.dart';
-import '../models/cart_item.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../../app_state.dart';
 import '../widgets/cart_item_tile.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  final List<CartItem> cartItems;
-  final double total;
-  final String comment;
-  final ValueChanged<String> onCommentChanged;
-  final VoidCallback onConfirm;
-
-  const CheckoutScreen({
-    super.key,
-    required this.cartItems,
-    required this.total,
-    required this.comment,
-    required this.onCommentChanged,
-    required this.onConfirm,
-  });
+  const CheckoutScreen({super.key});
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -28,7 +17,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   void initState() {
     super.initState();
-    _commentController = TextEditingController(text: widget.comment);
+    final appState = Provider.of<AppState>(context, listen: false);
+    _commentController = TextEditingController(text: appState.orderComment);
   }
 
   @override
@@ -39,12 +29,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context);
+
+    final totalPrice = appState.cartTotal;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Оформление заказа'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
       ),
       body: Column(
@@ -52,9 +46,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           Expanded(
             flex: 2,
             child: ListView.builder(
-              itemCount: widget.cartItems.length,
+              itemCount: appState.cartItems.length,
               itemBuilder: (context, index) {
-                final item = widget.cartItems[index];
+                final item = appState.cartItems[index];
                 return CartItemTile(
                   item: item,
                   onRemove: () {},
@@ -66,7 +60,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           Expanded(
             flex: 1,
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -81,9 +75,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     decoration: const InputDecoration(
                       hintText: 'Например: "Без орехов", "С собой", "Добавить свечу"',
                       border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.all(12.0),
+                      contentPadding: EdgeInsets.all(8.0),
                     ),
-                    onChanged: widget.onCommentChanged,
+                    onChanged: (value) => appState.updateOrderComment(value),
                   ),
                 ],
               ),
@@ -106,7 +100,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      '${widget.total.toInt()} ₽',
+                      '$totalPrice ₽',
                       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -116,7 +110,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onConfirm();
+                      appState.checkout();
+                      context.go('/menu');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Заказ оформлен! Спасибо!')),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
