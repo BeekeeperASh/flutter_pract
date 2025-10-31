@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'app_state.dart';
 import 'cart/models/cart_item.dart';
-import 'cart/screens/cart_screen.dart';
-import 'cart/screens/checkout_screen.dart';
 import 'menu/models/menu_item.dart';
 import 'menu/screens/menu_screen.dart';
 import 'orders/models/order.dart';
-import 'orders/screens/orders_screen.dart';
 
 
 final _demoMenuItems = [
@@ -150,45 +149,12 @@ class _AppContainerState extends State<AppContainer> {
     });
   }
 
-  void _showMenu() => setState(() => _currentScreen = AppScreen.menu);
-  void _showCart() => setState(() => _currentScreen = AppScreen.cart);
-  void _showOrders() => setState(() => _currentScreen = AppScreen.orders);
-
   @override
   Widget build(BuildContext context) {
-    switch (_currentScreen) {
-      case AppScreen.menu:
-        return MenuScreen(
-          menuItems: _menuItems,
-          cartItems: _cartItems,
-          onAddToCart: _addToCart,
-          onShowCart: _showCart,
-          onShowOrders: _showOrders,
-        );
-      case AppScreen.cart:
-        return CartScreen(
-          cartItems: _cartItems,
-          onRemoveFromCart: _removeFromCart,
-          onClearCart: _clearCart,
-          onCheckout: _proceedToCheckout,
-          onShowMenu: _showMenu,
-          onShowOrders: _showOrders,
-        );
-      case AppScreen.orders:
-        return OrdersScreen(
-          orders: _orders,
-          onShowMenu: _showMenu,
-          onShowCart: _showCart,
-        );
-      case AppScreen.checkout:
-        return CheckoutScreen(
-          cartItems: _cartItems,
-          total: _cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity)),
-          comment: _orderComment,
-          onCommentChanged: _updateOrderComment,
-          onConfirm: _checkout,
-          onCancel: _cancelCheckout,
-        );
-    }
+    return Consumer<AppState>(
+      builder: (context, appState, child) {
+        return MenuScreen();
+      },
+    );
   }
 }

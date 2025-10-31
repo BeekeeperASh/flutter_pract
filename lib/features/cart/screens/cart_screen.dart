@@ -1,51 +1,42 @@
 import 'package:flutter/material.dart';
-import '../models/cart_item.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../../app_state.dart';
 import '../widgets/cart_item_tile.dart';
 import '../../../shared/widgets/empty_state.dart';
 
 class CartScreen extends StatelessWidget {
-  final List<CartItem> cartItems;
-  final ValueChanged<String> onRemoveFromCart;
-  final VoidCallback onClearCart;
-  final VoidCallback onCheckout;
-
-  const CartScreen({
-    super.key,
-    required this.cartItems,
-    required this.onRemoveFromCart,
-    required this.onClearCart,
-    required this.onCheckout,
-  });
-
-  double get _totalPrice {
-    return cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
-  }
+  const CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context);
+
+    final totalPrice = appState.cartTotal;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Корзина'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
       ),
       body: Column(
         children: [
           Expanded(
-            child: cartItems.isEmpty
+            child: appState.cartItems.isEmpty
                 ? const EmptyState(
               message: 'Ваша корзина пуста\nДобавьте товары из меню',
               icon: Icons.shopping_cart_outlined, imageUrl: '',
             )
                 : ListView.builder(
-              itemCount: cartItems.length,
+              itemCount: appState.cartItems.length,
               itemBuilder: (context, index) {
-                final item = cartItems[index];
+                final item = appState.cartItems[index];
                 return CartItemTile(
                   item: item,
-                  onRemove: () => onRemoveFromCart(item.id),
+                  onRemove: () => appState.removeFromCart(item.id),
                 );
               },
             ),
@@ -55,7 +46,7 @@ class CartScreen extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  'Итого: ${_totalPrice.toInt()} ₽',
+                  'Итого: $totalPrice ₽',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 16),
@@ -63,7 +54,7 @@ class CartScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: cartItems.isEmpty ? null : onClearCart,
+                        onPressed: appState.cartItems.isEmpty ? null : () => appState.clearCart(),
                         style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
                         child: const Text('Очистить'),
                       ),
@@ -71,7 +62,7 @@ class CartScreen extends StatelessWidget {
                     const SizedBox(width: 16),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: cartItems.isEmpty ? null : onCheckout,
+                        onPressed: appState.cartItems.isEmpty ? null : () => context.push('/menu/checkout'),
                         child: const Text('Оформить заказ'),
                       ),
                     ),
