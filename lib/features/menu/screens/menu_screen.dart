@@ -76,7 +76,7 @@ class MenuScreen extends StatelessWidget {
   }
 
   void _navigateToOrders(BuildContext context) {
-    Navigator.push(
+    Navigator.push( // навигация к истории заказов
       context,
       MaterialPageRoute(
         builder: (context) => OrdersScreen(
