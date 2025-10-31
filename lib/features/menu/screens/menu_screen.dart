@@ -38,7 +38,7 @@ class MenuScreen extends StatelessWidget {
   }
 
   void _navigateToCart(BuildContext context) {
-    Navigator.push(
+    Navigator.push( // навигация к корзине
       context,
       MaterialPageRoute(
         builder: (context) => CartScreen(

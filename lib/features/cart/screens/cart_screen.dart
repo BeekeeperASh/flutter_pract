@@ -8,8 +8,6 @@ class CartScreen extends StatelessWidget {
   final ValueChanged<String> onRemoveFromCart;
   final VoidCallback onClearCart;
   final VoidCallback onCheckout;
-  final VoidCallback onShowMenu;
-  final VoidCallback onShowOrders;
 
   const CartScreen({
     super.key,
@@ -17,8 +15,6 @@ class CartScreen extends StatelessWidget {
     required this.onRemoveFromCart,
     required this.onClearCart,
     required this.onCheckout,
-    required this.onShowMenu,
-    required this.onShowOrders,
   });
 
   double get _totalPrice {
@@ -32,14 +28,8 @@ class CartScreen extends StatelessWidget {
         title: const Text('Корзина'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: onShowMenu,
+          onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.history),
-            onPressed: onShowOrders,
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -47,8 +37,7 @@ class CartScreen extends StatelessWidget {
             child: cartItems.isEmpty
                 ? const EmptyState(
               message: 'Ваша корзина пуста\nДобавьте товары из меню',
-              imageUrl: 'https://avatars.mds.yandex.net/i?id=2d6069aadfe5cb3e964684cbbb33acc34342f19a-5810594-images-thumbs&n=13',
-              icon: Icons.shopping_cart_outlined,
+              icon: Icons.shopping_cart_outlined, imageUrl: '',
             )
                 : ListView.builder(
               itemCount: cartItems.length,
