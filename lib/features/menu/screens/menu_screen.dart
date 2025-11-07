@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pract/features/profile/screens/profile_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../app_state.dart';
@@ -42,23 +43,35 @@ class MenuScreen extends StatelessWidget {
                 icon: const Icon(Icons.history),
                 onPressed: () => context.push('/menu/orders'),
               ),
+              //onPressed: () => context.push('/menu/profile'),
+
+              IconButton(
+                icon: const Icon(Icons.person),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProfileScreen()),
+                  );
+                },
+              ),
             ],
           ),
           body: appState.menuItems.isEmpty
               ? const EmptyState(
-            message: 'Меню временно недоступно',
-            icon: Icons.cake, imageUrl: '',
-          )
+                  message: 'Меню временно недоступно',
+                  icon: Icons.cake,
+                  imageUrl: '',
+                )
               : ListView.builder(
-            itemCount: appState.menuItems.length,
-            itemBuilder: (context, index) {
-              final item = appState.menuItems[index];
-              return MenuItemTile(
-                item: item,
-                onAddToCart: () => appState.addToCart(item),
-              );
-            },
-          ),
+                  itemCount: appState.menuItems.length,
+                  itemBuilder: (context, index) {
+                    final item = appState.menuItems[index];
+                    return MenuItemTile(
+                      item: item,
+                      onAddToCart: () => appState.addToCart(item),
+                    );
+                  },
+                ),
         );
       },
     );
