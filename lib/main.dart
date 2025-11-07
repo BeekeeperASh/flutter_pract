@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'features/app_state.dart';
+import 'features/auth/screens/auth_screen.dart';
 import 'features/menu/screens/menu_screen.dart';
 import 'features/profile/screens/profile_screen.dart';
 import 'features/cart/screens/cart_screen.dart';
@@ -22,10 +23,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         title: 'Sweet Delights',
-        theme: ThemeData(
-          primarySwatch: Colors.pink,
-          useMaterial3: true,
-        ),
+        theme: ThemeData(primarySwatch: Colors.pink, useMaterial3: true),
         routerConfig: _router,
       ),
     );
@@ -33,99 +31,45 @@ class MyApp extends StatelessWidget {
 }
 
 final GoRouter _router = GoRouter(
-  initialLocation: '/menu',
+  initialLocation: '/auth',
   routes: [
-    StatefulShellRoute.indexedStack(
-      builder: (context, state, navigationShell) {
-        return MainNavigationScreen(navigationShell: navigationShell);
+    GoRoute(
+      path: '/auth',
+      pageBuilder: (context, state) {
+        return NoTransitionPage(child: AuthScreen());
       },
-      branches: [
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/menu',
-              pageBuilder: (context, state) {
-                return NoTransitionPage(
-                  child: MenuScreen(),
-                );
-              },
-              routes: [
-                GoRoute(
-                  path: 'cart',
-                  pageBuilder: (context, state) {
-                    return NoTransitionPage(
-                      child: CartScreen(),
-                    );
-                  },
-                ),
-                GoRoute(
-                  path: 'orders',
-                  pageBuilder: (context, state) {
-                    return NoTransitionPage(
-                      child: OrdersScreen(),
-                    );
-                  },
-                ),
-                GoRoute(
-                  path: 'checkout',
-                  pageBuilder: (context, state) {
-                    return NoTransitionPage(
-                      child: CheckoutScreen(),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ],
+    ),
+    GoRoute(
+      path: '/menu',
+      pageBuilder: (context, state) {
+        return const MaterialPage(child: MenuScreen());
+      },
+      routes: [
+        GoRoute(
+          path: 'cart',
+          pageBuilder: (context, state) {
+            return const MaterialPage(child: CartScreen());
+          },
         ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/profile',
-              pageBuilder: (context, state) {
-                return NoTransitionPage(
-                  child: ProfileScreen(),
-                );
-              },
-            ),
-          ],
+        GoRoute(
+          path: 'orders',
+          pageBuilder: (context, state) {
+            return const MaterialPage(child: OrdersScreen());
+          },
+        ),
+        GoRoute(
+          path: 'checkout',
+          pageBuilder: (context, state) {
+            return const MaterialPage(child: CheckoutScreen());
+          },
+        ),
+        GoRoute(
+          path: 'profile',
+          pageBuilder: (context, state) {
+            return const MaterialPage(child: ProfileScreen());
+          },
         ),
       ],
     ),
   ],
 );
-
-class MainNavigationScreen extends StatelessWidget {
-  final StatefulNavigationShell navigationShell;
-
-  const MainNavigationScreen({
-    super.key,
-    required this.navigationShell,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: navigationShell,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: navigationShell.currentIndex,
-        onTap: (index) {
-          navigationShell.goBranch(
-            index,
-            initialLocation: index == navigationShell.currentIndex,
-          );
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.cake),
-            label: 'Меню',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Профиль',
-          ),
-        ],
-      ),
-    );
-  }
-}

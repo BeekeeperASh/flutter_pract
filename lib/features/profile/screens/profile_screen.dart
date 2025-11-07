@@ -61,11 +61,6 @@ class ProfileScreen extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     context.pushReplacement('/auth');
-                    Navigator.of(context).pushReplacement(
-                        PageRouteBuilder(
-                          pageBuilder: (context, animation, secondaryAnimation) => AuthScreen(),
-                        )
-                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
