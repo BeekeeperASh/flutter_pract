@@ -1,4 +1,7 @@
+import 'dart:nativewrappers/_internal/vm/lib/internal_patch.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_pract/shared/service_locator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../shared/widgets/app_state_scope.dart';
@@ -11,8 +14,13 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = AppStateScope.of(context);
-
+    final AppState appState;
+    if (locator.isRegistered<AppState>()) {
+      appState = locator.get<AppState>();
+    } else {
+      printToConsole('AppState не зарегистрирован, создание пустого состояния');
+      appState = AppState();
+    }
     final totalPrice = appState.cartTotal;
 
     return Scaffold(
@@ -28,19 +36,20 @@ class CartScreen extends StatelessWidget {
           Expanded(
             child: appState.cartItems.isEmpty
                 ? const EmptyState(
-              message: 'Ваша корзина пуста\nДобавьте товары из меню',
-              icon: Icons.shopping_cart_outlined, imageUrl: '',
-            )
+                    message: 'Ваша корзина пуста\nДобавьте товары из меню',
+                    icon: Icons.shopping_cart_outlined,
+                    imageUrl: '',
+                  )
                 : ListView.builder(
-              itemCount: appState.cartItems.length,
-              itemBuilder: (context, index) {
-                final item = appState.cartItems[index];
-                return CartItemTile(
-                  item: item,
-                  onRemove: () => appState.removeFromCart(item.id),
-                );
-              },
-            ),
+                    itemCount: appState.cartItems.length,
+                    itemBuilder: (context, index) {
+                      final item = appState.cartItems[index];
+                      return CartItemTile(
+                        item: item,
+                        onRemove: () => appState.removeFromCart(item.id),
+                      );
+                    },
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -55,15 +64,21 @@ class CartScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: appState.cartItems.isEmpty ? null : () => appState.clearCart(),
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                        onPressed: appState.cartItems.isEmpty
+                            ? null
+                            : () => appState.clearCart(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey,
+                        ),
                         child: const Text('Очистить'),
                       ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: appState.cartItems.isEmpty ? null : () => context.push('/menu/checkout'),
+                        onPressed: appState.cartItems.isEmpty
+                            ? null
+                            : () => context.push('/menu/checkout'),
                         child: const Text('Оформить заказ'),
                       ),
                     ),

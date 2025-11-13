@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pract/shared/service_locator.dart';
 import 'package:flutter_pract/shared/widgets/app_state_scope.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
       child: Builder(
         builder: (context) {
           final appState = Provider.of<AppState>(context, listen: false);
+          setupLocator(appState);
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
             title: 'Sweet Delights',

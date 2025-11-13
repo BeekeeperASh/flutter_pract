@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../../shared/widgets/app_state_scope.dart';
 import '../../app_state.dart';
 import '../widgets/cart_item_tile.dart';
 
@@ -29,7 +30,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<AppState>(context);
+    final appState = AppStateScope.of(context);
 
     final totalPrice = appState.cartTotal;
 
