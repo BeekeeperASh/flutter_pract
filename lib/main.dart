@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pract/shared/widgets/app_state_scope.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'features/app_state.dart';
@@ -20,11 +21,25 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => AppState(),
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        title: 'Sweet Delights',
-        theme: ThemeData(primarySwatch: Colors.pink, useMaterial3: true),
-        routerConfig: _router,
+      child: Builder(
+        builder: (context) {
+          final appState = Provider.of<AppState>(context, listen: false);
+          return MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            title: 'Sweet Delights',
+            theme: ThemeData(
+              primarySwatch: Colors.pink,
+              useMaterial3: true,
+            ),
+            routerConfig: _router,
+            builder: (context, child) {
+              return AppStateScope(
+                appState: appState,
+                child: child!,
+              );
+            },
+          );
+        },
       ),
     );
   }

@@ -43,13 +43,6 @@ class MenuScreen extends StatelessWidget {
                 icon: const Icon(Icons.history),
                 onPressed: () => context.push('/menu/orders'),
               ),
-              //onPressed: () => context.push('/menu/profile'),
-              // onPressed: () {
-              //   Navigator.push(
-              //     context,
-              //     MaterialPageRoute(builder: (context) => ProfileScreen()),
-              //   );
-              // },
 
               IconButton(
                 icon: const Icon(Icons.person),
