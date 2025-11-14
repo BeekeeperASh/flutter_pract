@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../../shared/providers/app_providers.dart';
 import '../../app_state.dart';
 import '../widgets/order_tile.dart';
 import '../../../shared/widgets/empty_state.dart';
 
-class OrdersScreen extends StatelessWidget {
+class OrdersScreen extends ConsumerWidget {
   const OrdersScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final appState = Provider.of<AppState>(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final orders = ref.watch(ordersProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -20,15 +22,15 @@ class OrdersScreen extends StatelessWidget {
           onPressed: () => context.pop(),
         ),
       ),
-      body: appState.orders.isEmpty
+      body: orders.isEmpty
           ? const EmptyState(
         message: 'У вас еще нет заказов\nОформите первый заказ в корзине',
         icon: Icons.receipt_long, imageUrl: '',
       )
           : ListView.builder(
-        itemCount: appState.orders.length,
+        itemCount: orders.length,
         itemBuilder: (context, index) {
-          final order = appState.orders[index];
+          final order = orders[index];
           return OrderTile(order: order);
         },
       ),
