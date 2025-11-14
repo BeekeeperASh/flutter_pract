@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pract/shared/service_locator.dart';
 import 'package:flutter_pract/shared/widgets/app_state_scope.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'features/app_state.dart';
@@ -12,7 +13,7 @@ import 'features/orders/screens/orders_screen.dart';
 import 'features/cart/screens/checkout_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -20,29 +21,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => AppState(),
-      child: Builder(
-        builder: (context) {
-          final appState = Provider.of<AppState>(context, listen: false);
-          setupLocator(appState);
-          return MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            title: 'Sweet Delights',
-            theme: ThemeData(
-              primarySwatch: Colors.pink,
-              useMaterial3: true,
-            ),
-            routerConfig: _router,
-            builder: (context, child) {
-              return AppStateScope(
-                appState: appState,
-                child: child!,
-              );
-            },
-          );
-        },
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      title: 'Sweet Delights',
+      theme: ThemeData(
+        primarySwatch: Colors.pink,
+        useMaterial3: true,
       ),
+      routerConfig: _router,
     );
   }
 }
