@@ -1,38 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../../shared/providers/app_providers.dart';
 import '../../../shared/widgets/app_state_scope.dart';
 import '../../app_state.dart';
 import '../widgets/cart_item_tile.dart';
 
-class CheckoutScreen extends StatefulWidget {
+class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
-
   @override
-  State<CheckoutScreen> createState() => _CheckoutScreenState();
+  ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
-class _CheckoutScreenState extends State<CheckoutScreen> {
+class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   late TextEditingController _commentController;
-
   @override
   void initState() {
     super.initState();
-    final appState = Provider.of<AppState>(context, listen: false);
-    _commentController = TextEditingController(text: appState.orderComment);
+    final comment = ref.read(orderCommentProvider);
+    _commentController = TextEditingController(text: comment);
   }
-
   @override
   void dispose() {
     _commentController.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
-    final appState = AppStateScope.of(context);
-
-    final totalPrice = appState.cartTotal;
+    final cartItems = ref.watch(cartProvider);
+    final totalPrice = ref.watch(cartTotalProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -47,17 +44,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           Expanded(
             flex: 2,
             child: ListView.builder(
-              itemCount: appState.cartItems.length,
+              itemCount: cartItems.length,
               itemBuilder: (context, index) {
-                final item = appState.cartItems[index];
-                return CartItemTile(
-                  item: item,
-                  onRemove: () {},
-                );
+                final item = cartItems[index];
+                return CartItemTile(item: item, onRemove: () {});
               },
             ),
           ),
-
           Expanded(
             flex: 1,
             child: Padding(
@@ -74,17 +67,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     controller: _commentController,
                     maxLines: 2,
                     decoration: const InputDecoration(
-                      hintText: 'Например: "Без орехов", "С собой", "Добавить свечу"',
+                      hintText:
+                          'Например: "Без орехов", "С собой", "Добавить свечу"',
                       border: OutlineInputBorder(),
                       contentPadding: EdgeInsets.all(8.0),
                     ),
-                    onChanged: (value) => appState.updateOrderComment(value),
+                    onChanged: (value) =>
+                        ref.read(orderCommentProvider.notifier).state = value,
                   ),
                 ],
               ),
             ),
           ),
-
           Container(
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
@@ -98,11 +92,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   children: [
                     const Text(
                       'Итого:',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(
-                      '$totalPrice ₽',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      '${totalPrice.toInt()} ₽',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -111,10 +111,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      appState.checkout();
+                      final comment = ref.read(orderCommentProvider);
+                      ref
+                          .read(ordersProvider.notifier)
+                          .checkout(
+                            cartItems,
+                            comment.isNotEmpty ? comment : null,
+                          );
+                      ref.read(cartProvider.notifier).clearCart();
+                      ref.read(orderCommentProvider.notifier).state = '';
                       context.go('/menu');
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Заказ оформлен! Спасибо!')),
+                        const SnackBar(
+                          content: Text('Заказ оформлен! Спасибо!'),
+                        ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
