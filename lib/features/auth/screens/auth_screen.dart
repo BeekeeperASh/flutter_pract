@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pract/features/menu/screens/menu_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../shared/providers/app_providers.dart';
 
-class AuthScreen extends StatelessWidget {
+class AuthScreen extends ConsumerWidget {
   const AuthScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: Colors.pink.shade50,
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(32.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -20,58 +21,38 @@ class AuthScreen extends StatelessWidget {
                 backgroundColor: Colors.pink,
                 child: Icon(
                   Icons.cake,
-                  size: 40,
+                  size: 60,
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 32),
 
               const Text(
                 'Sweet Delights',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 32,
                   fontWeight: FontWeight.bold,
                   color: Colors.pink,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 8),
               const Text(
                 'Кондитерская',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 18,
                   color: Colors.grey,
                 ),
               ),
-              const SizedBox(height: 24),
-
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: const Icon(Icons.email),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Пароль',
-                  prefixIcon: const Icon(Icons.lock),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 48),
 
               SizedBox(
                 width: double.infinity,
-                height: 32,
+                height: 56,
                 child: ElevatedButton(
                   onPressed: () {
-                    context.pushReplacement('/menu');
+                    ref.read(authProvider.notifier).state = true;
+                    ref.read(userProvider.notifier).setUser('Алексей');
+                    context.go('/menu');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.pink,
@@ -80,7 +61,7 @@ class AuthScreen extends StatelessWidget {
                     ),
                   ),
                   child: const Text(
-                    'Войти',
+                    'Войти в приложение',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.white,
@@ -90,14 +71,26 @@ class AuthScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
 
-              TextButton(
-                onPressed: () {
-                  context.pushReplacement('/menu');
-                },
-                child: const Text(
-                  'Нет аккаунта? Зарегистрироваться',
-                  style: TextStyle(
-                    color: Colors.pink,
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () {
+                    ref.read(authProvider.notifier).state = true;
+                    ref.read(userProvider.notifier).setUser('Гость');
+                    context.go('/menu');
+                  },
+                  style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    side: const BorderSide(color: Colors.pink),
+                  ),
+                  child: const Text(
+                    'Продолжить как гость',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.pink,
+                    ),
                   ),
                 ),
               ),
